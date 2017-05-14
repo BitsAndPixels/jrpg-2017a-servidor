@@ -12,12 +12,10 @@
 
 ### Integrantes del equipo
 
-* Completar ([xxxx](https://github.com/xxxx))
-* Completar ([xxxx](https://github.com/xxxx))
-* Completar ([xxxx](https://github.com/xxxx))
-* Completar ([xxxx](https://github.com/xxxx))
-* Completar ([xxxx](https://github.com/xxxx))
-* Completar ([xxxx](https://github.com/xxxx))
+* Martín Cortez ([mcortex](https://github.com/mcortex))
+* Diego Lo Giudice ([DLoGiudice](https://github.com/DLoGiudice))
+* Federico Manzano ([FedericoManzano](https://github.com/FedericoManzano))
+* David Regueira Vazquez ([DavidRegueiraVazquez](https://github.com/DavidRegueiraVazquez))
 
 ## Sobre la tecnología
 
