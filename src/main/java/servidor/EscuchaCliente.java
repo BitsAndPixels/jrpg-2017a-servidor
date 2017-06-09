@@ -15,6 +15,7 @@ import mensajeria.PaqueteBatalla;
 import mensajeria.PaqueteDeMovimientos;
 import mensajeria.PaqueteDePersonajes;
 import mensajeria.PaqueteFinalizarBatalla;
+import mensajeria.PaqueteItem;
 import mensajeria.PaqueteMovimiento;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
@@ -32,6 +33,7 @@ public class EscuchaCliente extends Thread {
 	private PaqueteBatalla paqueteBatalla;
 	private PaqueteAtacar paqueteAtacar;
 	private PaqueteFinalizarBatalla paqueteFinalizarBatalla;
+	private PaqueteItem paqueteItem;
 	
 	private PaqueteDeMovimientos paqueteDeMovimiento;
 	private PaqueteDePersonajes paqueteDePersonajes;
@@ -224,6 +226,12 @@ public class EscuchaCliente extends Thread {
 					}
 					
 					break;
+				
+				case Comando.OBTENERITEM:
+					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
+					Servidor.log.append("Se solicita el item " + paqueteItem.getIdItem() + System.lineSeparator());
+					PaqueteItem paqueteItem2 = Servidor.getConector().getItem(paqueteItem.getIdItem());
+					salida.writeObject(gson.toJson(paqueteItem2));
 				
 				default:
 					break;
