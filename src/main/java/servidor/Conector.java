@@ -255,6 +255,29 @@ public class Conector {
 		return new PaqueteItem();
 		
 	}
+	
+	public int getCantItem() {
+		ResultSet result = null;
+		try {
+			// Selecciono el item
+			PreparedStatement st = connect.prepareStatement("SELECT count(1) as cantidad FROM item");
+			result = st.executeQuery();
+
+			// Obtengo la cantidad de items
+			int cantItem = result.getInt("cantidad");
+
+			// Devuelvo el paquete item con sus datos
+			return cantItem;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar la cantidad de items." + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return 0;
+		
+	}
 
 	public PaquetePersonaje getPersonaje(PaqueteUsuario user) {
 		ResultSet result = null;

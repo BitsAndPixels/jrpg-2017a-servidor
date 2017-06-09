@@ -230,8 +230,17 @@ public class EscuchaCliente extends Thread {
 				case Comando.OBTENERITEM:
 					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
 					Servidor.log.append("Se solicita el item " + paqueteItem.getIdItem() + System.lineSeparator());
-					PaqueteItem paqueteItem2 = Servidor.getConector().getItem(paqueteItem.getIdItem());
-					salida.writeObject(gson.toJson(paqueteItem2));
+					PaqueteItem paqueteItemReturn = Servidor.getConector().getItem(paqueteItem.getIdItem());
+					salida.writeObject(gson.toJson(paqueteItemReturn));
+					break;
+				
+				case Comando.CANTIDADITEMS:
+					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
+					PaqueteItem paqueteItemCant = new PaqueteItem();
+					paqueteItemCant.setCantidad(Servidor.getConector().getCantItem());
+					paqueteItemCant.setComando(Comando.CANTIDADITEMS);
+					salida.writeObject(gson.toJson(paqueteItemCant));
+					break;
 				
 				default:
 					break;
