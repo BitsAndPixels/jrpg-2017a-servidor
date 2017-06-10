@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -216,6 +217,88 @@ public class Conector {
 		
 	}
 	
+	public PaqueteMochila getMochila (int idPersonaje) {
+		ResultSet result = null;
+		try {
+			// Obtengo el idMochila
+			PreparedStatement stObtieneIdMochila = connect.prepareStatement("SELECT idMochila FROM personaje WHERE idPersonaje = ?");
+			stObtieneIdMochila.setInt(1, idPersonaje);
+			result = stObtieneIdMochila.executeQuery();
+			
+			int idMochila = result.getInt("idMochila");
+			
+			// Obtengo la Mochila
+			PreparedStatement stObtieneMochila = connect.prepareStatement("SELECT * FROM mochila WHERE idMochila = ?");
+			stObtieneMochila.setInt(1, idMochila);
+			result = stObtieneMochila.executeQuery();
+
+			// Obtengo los atributos del item
+			PaqueteMochila mochila = new PaqueteMochila();
+			ArrayList<Integer> items = new ArrayList<Integer>();
+			
+			
+			for (int i=0;i<20;i++) {
+				String nombreColumna = "item"+(i+1);
+				items.add(result.getInt(nombreColumna));
+			}
+			
+			mochila.setIdPje(idPersonaje);
+			mochila.setIdMochila(result.getInt("idMochila"));
+			mochila.setItems(items);
+			
+
+			// Devuelvo el paquete mochila con sus datos
+			return mochila;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar la mochila del personaje id: " + idPersonaje + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return new PaqueteMochila();
+	}
+	
+	public PaqueteInventario getInventario (int idPersonaje) {
+		ResultSet result = null;
+		try {
+			// Obtengo el idMochila
+			PreparedStatement stObtieneIdInventario = connect.prepareStatement("SELECT idInventario FROM personaje WHERE idPersonaje = ?");
+			stObtieneIdInventario.setInt(1, idPersonaje);
+			result = stObtieneIdInventario.executeQuery();
+			
+			int idInventario = result.getInt("idInventario");
+			
+			// Obtengo el inventario
+			PreparedStatement stObtieneInventario = connect.prepareStatement("SELECT * FROM inventario WHERE idInventario = ?");
+			stObtieneInventario.setInt(1, idInventario);
+			result = stObtieneInventario.executeQuery();
+
+			// Obtengo los atributos del item
+			PaqueteInventario inventario = new PaqueteInventario();
+						
+			inventario.setIdPje(idPersonaje);
+			inventario.setIdInventario(idInventario);
+			inventario.setManoDer(result.getInt("manos1"));
+			inventario.setManoIzq(result.getInt("manos2"));
+			inventario.setPie(result.getInt("pie"));
+			inventario.setCabeza(result.getInt("cabeza"));
+			inventario.setPecho(result.getInt("pecho"));
+			inventario.setAccesorio(result.getInt("accesorio"));
+			
+			// Devuelvo el paquete mochila con sus datos
+			return inventario;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar el inventario del personaje id: " + idPersonaje + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return new PaqueteInventario();
+	}
+	
+	
 	public void actualizarMochila(int idMochila) {
 		
 	}
@@ -223,6 +306,8 @@ public class Conector {
 	public void actualizarInventario(int idInventario) {
 		
 	}
+	
+	
 	
 	public PaqueteItem getItem(int idItem) {
 		ResultSet result = null;
