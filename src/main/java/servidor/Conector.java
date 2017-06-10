@@ -5,9 +5,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import mensajeria.PaqueteMochila;
+import mensajeria.PaqueteItem;
+import mensajeria.PaqueteInventario;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
 
@@ -18,11 +22,11 @@ public class Conector {
 
 	public void connect() {
 		try {
-			Servidor.log.append("Estableciendo conexión con la base de datos..." + System.lineSeparator());
+			Servidor.log.append("Estableciendo conexiï¿½n con la base de datos..." + System.lineSeparator());
 			connect = DriverManager.getConnection("jdbc:sqlite:" + url);
-			Servidor.log.append("Conexión con la base de datos establecida con éxito." + System.lineSeparator());
+			Servidor.log.append("Conexiï¿½n con la base de datos establecida con ï¿½xito." + System.lineSeparator());
 		} catch (SQLException ex) {
-			Servidor.log.append("Fallo al intentar establecer la conexión con la base de datos. " + ex.getMessage()
+			Servidor.log.append("Fallo al intentar establecer la conexiï¿½n con la base de datos. " + ex.getMessage()
 					+ System.lineSeparator());
 		}
 	}
@@ -31,7 +35,7 @@ public class Conector {
 		try {
 			connect.close();
 		} catch (SQLException ex) {
-			Servidor.log.append("Error al intentar cerrar la conexión con la base de datos." + System.lineSeparator());
+			Servidor.log.append("Error al intentar cerrar la conexiï¿½n con la base de datos." + System.lineSeparator());
 			Logger.getLogger(Conector.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -87,7 +91,7 @@ public class Conector {
 			stRegistrarPersonaje.setInt(13, -1);
 			stRegistrarPersonaje.execute();
 
-			// Recupero la última key generada
+			// Recupero la ï¿½ltima key generada
 			ResultSet rs = stRegistrarPersonaje.getGeneratedKeys();
 			if (rs != null && rs.next()) {
 
@@ -162,7 +166,7 @@ public class Conector {
 	public boolean loguearUsuario(PaqueteUsuario user) {
 		ResultSet result = null;
 		try {
-			// Busco usuario y contraseña
+			// Busco usuario y contraseï¿½a
 			PreparedStatement st = connect
 					.prepareStatement("SELECT * FROM registro WHERE usuario = ? AND password = ? ");
 			st.setString(1, user.getUsername());
@@ -171,16 +175,16 @@ public class Conector {
 
 			// Si existe inicio sesion
 			if (result.next()) {
-				Servidor.log.append("El usuario " + user.getUsername() + " ha iniciado sesión." + System.lineSeparator());
+				Servidor.log.append("El usuario " + user.getUsername() + " ha iniciado sesiï¿½n." + System.lineSeparator());
 				return true;
 			}
 
 			// Si no existe informo y devuelvo false
-			Servidor.log.append("El usuario " + user.getUsername() + " ha realizado un intento fallido de inicio de sesión." + System.lineSeparator());
+			Servidor.log.append("El usuario " + user.getUsername() + " ha realizado un intento fallido de inicio de sesiï¿½n." + System.lineSeparator());
 			return false;
 
 		} catch (SQLException e) {
-			Servidor.log.append("El usuario " + user.getUsername() + " fallo al iniciar sesión." + System.lineSeparator());
+			Servidor.log.append("El usuario " + user.getUsername() + " fallo al iniciar sesiï¿½n." + System.lineSeparator());
 			e.printStackTrace();
 			return false;
 		}
@@ -204,12 +208,160 @@ public class Conector {
 			
 			stActualizarPersonaje.executeUpdate();
 			
-			Servidor.log.append("El personaje " + paquetePersonaje.getNombre() + " se ha actualizado con éxito."  + System.lineSeparator());;
+			Servidor.log.append("El personaje " + paquetePersonaje.getNombre() + " se ha actualizado con ï¿½xito."  + System.lineSeparator());;
 		} catch (SQLException e) {
 			Servidor.log.append("Fallo al intentar actualizar el personaje " + paquetePersonaje.getNombre()  + System.lineSeparator());
 			e.printStackTrace();
 		}
 		
+		
+	}
+	
+	public PaqueteMochila getMochila (int idPersonaje) {
+		ResultSet result = null;
+		try {
+			// Obtengo el idMochila
+			PreparedStatement stObtieneIdMochila = connect.prepareStatement("SELECT idMochila FROM personaje WHERE idPersonaje = ?");
+			stObtieneIdMochila.setInt(1, idPersonaje);
+			result = stObtieneIdMochila.executeQuery();
+			
+			int idMochila = result.getInt("idMochila");
+			
+			// Obtengo la Mochila
+			PreparedStatement stObtieneMochila = connect.prepareStatement("SELECT * FROM mochila WHERE idMochila = ?");
+			stObtieneMochila.setInt(1, idMochila);
+			result = stObtieneMochila.executeQuery();
+
+			// Obtengo los atributos del item
+			PaqueteMochila mochila = new PaqueteMochila();
+			ArrayList<Integer> items = new ArrayList<Integer>();
+			
+			
+			for (int i=0;i<20;i++) {
+				String nombreColumna = ("item"+(i+1));
+				//System.out.println(nombreColumna);
+				items.add(result.getInt(nombreColumna));
+			}
+			
+			mochila.setIdPje(idPersonaje);
+			mochila.setIdMochila(result.getInt("idMochila"));
+			mochila.setItems(items);
+			
+
+			// Devuelvo el paquete mochila con sus datos
+			return mochila;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar la mochila del personaje id: " + idPersonaje + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return new PaqueteMochila();
+	}
+	
+	public PaqueteInventario getInventario (int idPersonaje) {
+		ResultSet result = null;
+		try {
+			// Obtengo el idMochila
+			PreparedStatement stObtieneIdInventario = connect.prepareStatement("SELECT idInventario FROM personaje WHERE idPersonaje = ?");
+			stObtieneIdInventario.setInt(1, idPersonaje);
+			result = stObtieneIdInventario.executeQuery();
+			
+			int idInventario = result.getInt("idInventario");
+			
+			// Obtengo el inventario
+			PreparedStatement stObtieneInventario = connect.prepareStatement("SELECT * FROM inventario WHERE idInventario = ?");
+			stObtieneInventario.setInt(1, idInventario);
+			result = stObtieneInventario.executeQuery();
+
+			// Obtengo los atributos del item
+			PaqueteInventario inventario = new PaqueteInventario();
+						
+			inventario.setIdPje(idPersonaje);
+			inventario.setIdInventario(idInventario);
+			inventario.setManoDer(result.getInt("manos1"));
+			inventario.setManoIzq(result.getInt("manos2"));
+			inventario.setPie(result.getInt("pie"));
+			inventario.setCabeza(result.getInt("cabeza"));
+			inventario.setPecho(result.getInt("pecho"));
+			inventario.setAccesorio(result.getInt("accesorio"));
+			
+			// Devuelvo el paquete mochila con sus datos
+			return inventario;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar el inventario del personaje id: " + idPersonaje + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return new PaqueteInventario();
+	}
+	
+	
+	public void actualizarMochila(int idMochila) {
+		
+	}
+	
+	public void actualizarInventario(int idInventario) {
+		
+	}
+	
+	
+	
+	public PaqueteItem getItem(int idItem) {
+		ResultSet result = null;
+		try {
+			// Selecciono el item
+			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
+			st.setInt(1, idItem);
+			result = st.executeQuery();
+
+			// Obtengo los atributos del item
+			PaqueteItem item = new PaqueteItem();
+			item.setIdItem(idItem);
+			item.setBonoAtaque(result.getInt("bonoAtaque"));
+			item.setBonoDefensa(result.getInt("bonoDefensa"));
+			item.setBonoMagia(result.getInt("bonoMagia"));
+			item.setBonoSalud(result.getInt("bonoSalud"));
+			item.setBonoEnergia(result.getInt("bonoEnergia"));
+			item.setTipo(result.getInt("tipo"));
+			item.setNombre(result.getString("nombre"));
+
+			// Devuelvo el paquete item con sus datos
+			return item;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return new PaqueteItem();
+		
+	}
+	
+	public int getCantItem() {
+		ResultSet result = null;
+		try {
+			// Selecciono el item
+			PreparedStatement st = connect.prepareStatement("SELECT count(1) as cantidad FROM item");
+			result = st.executeQuery();
+
+			// Obtengo la cantidad de items
+			int cantItem = result.getInt("cantidad");
+
+			// Devuelvo el paquete item con sus datos
+			return cantItem;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar la cantidad de items." + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+
+		return 0;
 		
 	}
 
