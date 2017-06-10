@@ -235,6 +235,7 @@ public class EscuchaCliente extends Thread {
 					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
 					Servidor.log.append("Se solicita el item " + paqueteItem.getIdItem() + System.lineSeparator());
 					PaqueteItem paqueteItemReturn = Servidor.getConector().getItem(paqueteItem.getIdItem());
+					paqueteItemReturn.setComando(Comando.OBTENERITEM);
 					salida.writeObject(gson.toJson(paqueteItemReturn));
 					break;
 				
@@ -250,6 +251,7 @@ public class EscuchaCliente extends Thread {
 					paqueteInventario = (PaqueteInventario) gson.fromJson(cadenaLeida, PaqueteInventario.class);
 					Servidor.log.append("Se solicita el inventario del personaje id: " + paqueteInventario.getIdPje() + System.lineSeparator());
 					PaqueteInventario paqueteInventarioReturn = Servidor.getConector().getInventario(paqueteInventario.getIdPje());
+					paqueteInventarioReturn.setComando(Comando.OBTENERINVENTARIO);
 					salida.writeObject(gson.toJson(paqueteInventarioReturn));
 					break;
 					
@@ -257,6 +259,7 @@ public class EscuchaCliente extends Thread {
 					paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida, PaqueteMochila.class);
 					Servidor.log.append("Se solicita la mochila del personaje id: " + paqueteMochila.getIdPje() + System.lineSeparator());
 					PaqueteMochila paqueteMochilaReturn = Servidor.getConector().getMochila(paqueteMochila.getIdPje());
+					paqueteMochilaReturn.setComando(Comando.OBTENERMOCHILA);
 					salida.writeObject(gson.toJson(paqueteMochilaReturn));
 					break;
 				
