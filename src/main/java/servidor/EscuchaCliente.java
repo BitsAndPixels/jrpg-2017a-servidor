@@ -255,7 +255,7 @@ public class EscuchaCliente extends Thread {
 					
 				case Comando.OBTENERMOCHILA:
 					paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida, PaqueteMochila.class);
-					Servidor.log.append("Se solicita el inventario del personaje id: " + paqueteInventario.getIdPje() + System.lineSeparator());
+					Servidor.log.append("Se solicita la mochila del personaje id: " + paqueteMochila.getIdPje() + System.lineSeparator());
 					PaqueteMochila paqueteMochilaReturn = Servidor.getConector().getMochila(paqueteMochila.getIdPje());
 					salida.writeObject(gson.toJson(paqueteMochilaReturn));
 					break;
