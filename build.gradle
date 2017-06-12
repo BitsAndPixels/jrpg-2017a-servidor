@@ -11,29 +11,33 @@ sourceCompatibility = 1.7
 version = '0.1'
 test.ignoreFailures = true
 
-defaultTasks 'clean', 'compileJava', 'test', 'checkstyleMain', 'pmd', 'findbugsMain', 'jacocoTestReport'
+defaultTasks 'clean', 'compileJava', 'fatJar' ,'test', 'checkstyleMain', 'pmd', 'findbugsMain', 'jacocoTestReport'
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 configurations {
-	pmdConf
+    pmdConf
 }
 
 dependencies {
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     testCompile group: 'junit', name: 'junit', version: '4.+'
     pmdConf group: 'pmd', name: 'pmd', version: '4.3'
+    compile files('gson-2.8.0.jar')
+    compile files('sqlite-jdbc-3.15.1.jar')
+    compile files('jrpg-2017a-dominio-0.1.jar')
+    compile files('jrpg-2017a-cliente-0.1.jar')
 }
 
 /*buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath group: 'net.saliman', name: 'gradle-cobertura-plugin', version: '1.1.0'
-	}
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.saliman', name: 'gradle-cobertura-plugin', version: '1.1.0'
+    }
 }*/
 
 // Tareas
@@ -43,13 +47,11 @@ test {
     if (manager == null) {
         println("there is no security manager!");
     }
-
-    jvmArgs "-Djava.security.manager=java.lang.SecurityManager"
 }
 
 checkstyle {
-	configFile = new File(rootDir, "src/test/resources/sun_checks.xml")
-	ignoreFailures = true
+    configFile = new File(rootDir, "src/test/resources/sun_checks.xml")
+    ignoreFailures = true
 }
 
 /*cobertura {
@@ -65,7 +67,7 @@ task pmd (dependsOn: compileJava) << {
         }
         reportFolder = new File(rootDir, "build/reports/pmd-cpd")
         if (!reportFolder.isDirectory()) {
-        	reportFolder.mkdirs()
+            reportFolder.mkdirs()
         }
         taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask', classpath: configurations.pmdConf.asPath)
         taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask', classpath: configurations.pmdConf.asPath)
@@ -79,9 +81,9 @@ task pmd (dependsOn: compileJava) << {
                 }
         }
         cpd(minimumTokenCount: 10, format: 'xml',
-        	ignoreLiterals: 'true',
-        	ignoreIdentifiers: 'true',
-        	outputFile: 'build/reports/pmd-cpd/cpd.xml') {
+            ignoreLiterals: 'true',
+            ignoreIdentifiers: 'true',
+            outputFile: 'build/reports/pmd-cpd/cpd.xml') {
             fileSet(dir: "src/main/java") {
                 include(name: '**/*.java')
             }
@@ -89,8 +91,20 @@ task pmd (dependsOn: compileJava) << {
     }
 }
 
+task fatJar(type: Jar) {
+    manifest { 
+        attributes "Main-Class": "servidor.Servidor"
+    }
+
+    baseName = 'jrpg-servidor'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    
+    with jar
+}
+
 findbugs {
     ignoreFailures = true
+    toolVersion = "2.0.1"
 }
 
 
