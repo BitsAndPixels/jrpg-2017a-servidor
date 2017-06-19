@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import dominio.MyRandom;
 import inventario.Inventario;
 import inventario.Item;
 import inventario.Mochila;
@@ -237,7 +238,7 @@ public class Conector {
 			}
 			 */
 			
-			//ArrayList<Item> items = (ArrayList<Item>) paquetePersonaje.getMochila().getItems().values();
+//			ArrayList<Item> items = (ArrayList<Item>) paquetePersonaje.getMochila().getItems().values();
 			
 //			for (int i=0; i<20; i++) {
 //				if (i < items.size())
@@ -245,14 +246,19 @@ public class Conector {
 //				else
 //					stActualizarMochila.setInt(i+1, -1);
 //			}
-			int i=0;
+			int i = 0;
+			int index = 0;
 			for (Map.Entry<Integer, Item> item : paquetePersonaje.getMochila().getItems().entrySet()) {
-				stActualizarMochila.setInt(i+1, item.getKey());
+				index = i+1;
+				stActualizarMochila.setInt(index, item.getKey());
+				System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " el item:" + item.getKey());
 				i++;
 			}
 			
 			for (int j=i;j<20;j++) {
-				stActualizarMochila.setInt(j+1, -1);
+				index = j+1;
+				stActualizarMochila.setInt(index, -1);
+				System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " un item vacio");
 			}
 			
 			stActualizarMochila.setInt(21, paquetePersonaje.getMochila().getIdMochila());
@@ -318,100 +324,52 @@ public class Conector {
 		
 	}
 	
-//	public PaqueteMochila getMochila (int idPersonaje) {
+	
+//	public PaqueteItem getItem(int idItem) {
 //		ResultSet result = null;
 //		try {
-//			// Obtengo el idMochila
-//			PreparedStatement stObtieneIdMochila = connect.prepareStatement("SELECT idMochila FROM personaje WHERE idPersonaje = ?");
-//			stObtieneIdMochila.setInt(1, idPersonaje);
-//			result = stObtieneIdMochila.executeQuery();
-//			
-//			int idMochila = result.getInt("idMochila");
-//			
-//			// Obtengo la Mochila
-//			PreparedStatement stObtieneMochila = connect.prepareStatement("SELECT * FROM mochila WHERE idMochila = ?");
-//			stObtieneMochila.setInt(1, idMochila);
-//			result = stObtieneMochila.executeQuery();
+//			// Selecciono el item
+//			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
+//			st.setInt(1, idItem);
+//			result = st.executeQuery();
 //
 //			// Obtengo los atributos del item
-//			PaqueteMochila mochila = new PaqueteMochila();
-//			ArrayList<Integer> items = new ArrayList<Integer>();
-//			
-//			
-//			for (int i=0;i<20;i++) {
-//				String nombreColumna = ("item"+(i+1));
-//				//System.out.println(nombreColumna);
-//				items.add(result.getInt(nombreColumna));
-//			}
-//			
-//			mochila.setIdPje(idPersonaje);
-//			mochila.setIdMochila(result.getInt("idMochila"));
-//			mochila.setItems(items);
-//			
+//			PaqueteItem item = new PaqueteItem();
+//			item.setIdItem(idItem);
+//			item.setBonoAtaque(result.getInt("bonoAtaque"));
+//			item.setBonoDefensa(result.getInt("bonoDefensa"));
+//			item.setBonoMagia(result.getInt("bonoMagia"));
+//			item.setBonoSalud(result.getInt("bonoSalud"));
+//			item.setBonoEnergia(result.getInt("bonoEnergia"));
+//			item.setTipo(result.getInt("tipo"));
+//			item.setNombre(result.getString("nombre"));
 //
-//			// Devuelvo el paquete mochila con sus datos
-//			return mochila;
+//			// Devuelvo el paquete item con sus datos
+//			return item;
 //
 //		} catch (SQLException ex) {
-//			Servidor.log.append("Fallo al intentar recuperar la mochila del personaje id: " + idPersonaje + System.lineSeparator());
+//			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
 //			Servidor.log.append(ex.getMessage() + System.lineSeparator());
 //			ex.printStackTrace();
 //		}
 //
-//		return new PaqueteMochila();
+//		return new PaqueteItem();
+//		
 //	}
 	
-//	public PaqueteInventario getInventario (int idPersonaje) {
-//		ResultSet result = null;
-//		try {
-//			// Obtengo el idMochila
-//			PreparedStatement stObtieneIdInventario = connect.prepareStatement("SELECT idInventario FROM personaje WHERE idPersonaje = ?");
-//			stObtieneIdInventario.setInt(1, idPersonaje);
-//			result = stObtieneIdInventario.executeQuery();
-//			
-//			int idInventario = result.getInt("idInventario");
-//			
-//			// Obtengo el inventario
-//			PreparedStatement stObtieneInventario = connect.prepareStatement("SELECT * FROM inventario WHERE idInventario = ?");
-//			stObtieneInventario.setInt(1, idInventario);
-//			result = stObtieneInventario.executeQuery();
-//
-//			// Obtengo los atributos del item
-//			PaqueteInventario inventario = new PaqueteInventario();
-//						
-//			inventario.setIdPje(idPersonaje);
-//			inventario.setIdInventario(idInventario);
-//			inventario.setManoDer(result.getInt("manos1"));
-//			inventario.setManoIzq(result.getInt("manos2"));
-//			inventario.setPie(result.getInt("pie"));
-//			inventario.setCabeza(result.getInt("cabeza"));
-//			inventario.setPecho(result.getInt("pecho"));
-//			inventario.setAccesorio(result.getInt("accesorio"));
-//			
-//			// Devuelvo el paquete mochila con sus datos
-//			return inventario;
-//
-//		} catch (SQLException ex) {
-//			Servidor.log.append("Fallo al intentar recuperar el inventario del personaje id: " + idPersonaje + System.lineSeparator());
-//			Servidor.log.append(ex.getMessage() + System.lineSeparator());
-//			ex.printStackTrace();
-//		}
-//
-//		return new PaqueteInventario();
-//	}
-	
-	
-	public PaqueteItem getItem(int idItem) {
+	public PaqueteItem getItemRandom() {
 		ResultSet result = null;
 		try {
+			MyRandom randomizer = new MyRandom();
+			int idItemRandom = randomizer.nextInt(this.getCantItem())+1;
 			// Selecciono el item
 			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
-			st.setInt(1, idItem);
+			st.setInt(1, idItemRandom);
 			result = st.executeQuery();
 
 			// Obtengo los atributos del item
 			PaqueteItem item = new PaqueteItem();
-			item.setIdItem(idItem);
+			item.setIdItem(idItemRandom);
 			item.setBonoAtaque(result.getInt("bonoAtaque"));
 			item.setBonoDefensa(result.getInt("bonoDefensa"));
 			item.setBonoMagia(result.getInt("bonoMagia"));
@@ -424,7 +382,7 @@ public class Conector {
 			return item;
 
 		} catch (SQLException ex) {
-			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
+			Servidor.log.append("Fallo al intentar recuperar el item random" + System.lineSeparator());
 			Servidor.log.append(ex.getMessage() + System.lineSeparator());
 			ex.printStackTrace();
 		}
@@ -456,30 +414,30 @@ public class Conector {
 		
 	}
 	
-	public Item generarItem(int idItem) {
-		ResultSet result = null;
-		try {
-			// Selecciono el item
-			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
-			st.setInt(1, idItem);
-			result = st.executeQuery();
-
-			// Obtengo los atributos del item
-			Item item = new Item(idItem,result.getInt("bonoAtaque"),result.getInt("bonoDefensa"),result.getInt("bonoMagia"),
-								result.getInt("bonoSalud"),result.getInt("bonoEnergia"),result.getInt("tipo"),result.getString("nombre"), 
-								"desequipado");
-			// Devuelvo el paquete item con sus datos
-			return item;
-
-		} catch (SQLException ex) {
-			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
-			Servidor.log.append(ex.getMessage() + System.lineSeparator());
-			ex.printStackTrace();
-		}
-		//Retorno item vacio
-		return new Item();
-		
-	}
+//	public Item generarItem(int idItem) {
+//		ResultSet result = null;
+//		try {
+//			// Selecciono el item
+//			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
+//			st.setInt(1, idItem);
+//			result = st.executeQuery();
+//
+//			// Obtengo los atributos del item
+//			Item item = new Item(idItem,result.getInt("bonoAtaque"),result.getInt("bonoDefensa"),result.getInt("bonoMagia"),
+//								result.getInt("bonoSalud"),result.getInt("bonoEnergia"),result.getInt("tipo"),result.getString("nombre"), 
+//								"desequipado");
+//			// Devuelvo el paquete item con sus datos
+//			return item;
+//
+//		} catch (SQLException ex) {
+//			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
+//			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+//			ex.printStackTrace();
+//		}
+//		//Retorno item vacio
+//		return new Item();
+//		
+//	}
 	
 	
 
@@ -523,6 +481,8 @@ public class Conector {
 			result = stSeleccionarMochila.executeQuery();
 			
 			Mochila mochilaPersonaje = new Mochila();
+			
+			mochilaPersonaje.setIdMochila(idMochila);
 			
 			for (int i=0;i<20;i++) {
 				String nombreColumna = ("item"+(i+1));

@@ -228,11 +228,11 @@ public class EscuchaCliente extends Thread {
 					
 					break;
 				
-				case Comando.OBTENERITEM:
+				case Comando.OBTENERITEMRANDOM:
 					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
-					Servidor.log.append("Se solicita el item " + paqueteItem.getIdItem() + System.lineSeparator());
-					PaqueteItem paqueteItemReturn = Servidor.getConector().getItem(paqueteItem.getIdItem());
-					paqueteItemReturn.setComando(Comando.OBTENERITEM);
+					Servidor.log.append("Se solicita el item random " + System.lineSeparator());
+					PaqueteItem paqueteItemReturn = Servidor.getConector().getItemRandom();
+					paqueteItemReturn.setComando(Comando.OBTENERITEMRANDOM);
 					salida.writeObject(gson.toJson(paqueteItemReturn));
 					break;
 				
