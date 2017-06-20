@@ -16,9 +16,7 @@ import mensajeria.PaqueteChat;
 import mensajeria.PaqueteDeMovimientos;
 import mensajeria.PaqueteDePersonajes;
 import mensajeria.PaqueteFinalizarBatalla;
-import mensajeria.PaqueteInventario;
 import mensajeria.PaqueteItem;
-import mensajeria.PaqueteMochila;
 import mensajeria.PaqueteMovimiento;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
@@ -38,10 +36,9 @@ public class EscuchaCliente extends Thread {
 	private PaqueteAtacar paqueteAtacar;
 	private PaqueteFinalizarBatalla paqueteFinalizarBatalla;
 	private PaqueteItem paqueteItem;
-	private PaqueteInventario paqueteInventario;
-	private PaqueteMochila paqueteMochila;
 	private PaqueteChat paqueteChat;
-
+	
+	
 	private PaqueteDeMovimientos paqueteDeMovimiento;
 	private PaqueteDePersonajes paqueteDePersonajes;
 
@@ -233,39 +230,39 @@ public class EscuchaCliente extends Thread {
 					}
 
 					break;
-
-				case Comando.OBTENERITEM:
+				
+				case Comando.OBTENERITEMRANDOM:
 					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
-					Servidor.log.append("Se solicita el item " + paqueteItem.getIdItem() + System.lineSeparator());
-					PaqueteItem paqueteItemReturn = Servidor.getConector().getItem(paqueteItem.getIdItem());
-					paqueteItemReturn.setComando(Comando.OBTENERITEM);
+					Servidor.log.append("Se solicita el item random " + System.lineSeparator());
+					PaqueteItem paqueteItemReturn = Servidor.getConector().getItemRandom();
+					paqueteItemReturn.setComando(Comando.OBTENERITEMRANDOM);
 					salida.writeObject(gson.toJson(paqueteItemReturn));
 					break;
-
-				case Comando.CANTIDADITEMS:
-					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
-					PaqueteItem paqueteItemCant = new PaqueteItem();
-					paqueteItemCant.setCantidad(Servidor.getConector().getCantItem());
-					paqueteItemCant.setComando(Comando.CANTIDADITEMS);
-					salida.writeObject(gson.toJson(paqueteItemCant));
-					break;
-
-				case Comando.OBTENERINVENTARIO:
-					paqueteInventario = (PaqueteInventario) gson.fromJson(cadenaLeida, PaqueteInventario.class);
-					Servidor.log.append("Se solicita el inventario del personaje id: " + paqueteInventario.getIdPje() + System.lineSeparator());
-					PaqueteInventario paqueteInventarioReturn = Servidor.getConector().getInventario(paqueteInventario.getIdPje());
-					paqueteInventarioReturn.setComando(Comando.OBTENERINVENTARIO);
-					salida.writeObject(gson.toJson(paqueteInventarioReturn));
-					break;
-
-				case Comando.OBTENERMOCHILA:
-					paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida, PaqueteMochila.class);
-					Servidor.log.append("Se solicita la mochila del personaje id: " + paqueteMochila.getIdPje() + System.lineSeparator());
-					PaqueteMochila paqueteMochilaReturn = Servidor.getConector().getMochila(paqueteMochila.getIdPje());
-					paqueteMochilaReturn.setComando(Comando.OBTENERMOCHILA);
-					salida.writeObject(gson.toJson(paqueteMochilaReturn));
-					break;
-
+				
+//				case Comando.CANTIDADITEMS:
+//					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
+//					PaqueteItem paqueteItemCant = new PaqueteItem();
+//					paqueteItemCant.setCantidad(Servidor.getConector().getCantItem());
+//					paqueteItemCant.setComando(Comando.CANTIDADITEMS);
+//					salida.writeObject(gson.toJson(paqueteItemCant));
+//					break;
+					
+//				case Comando.OBTENERINVENTARIO:
+//					paqueteInventario = (PaqueteInventario) gson.fromJson(cadenaLeida, PaqueteInventario.class);
+//					Servidor.log.append("Se solicita el inventario del personaje id: " + paqueteInventario.getIdPje() + System.lineSeparator());
+//					PaqueteInventario paqueteInventarioReturn = Servidor.getConector().getInventario(paqueteInventario.getIdPje());
+//					paqueteInventarioReturn.setComando(Comando.OBTENERINVENTARIO);
+//					salida.writeObject(gson.toJson(paqueteInventarioReturn));
+//					break;
+					
+//				case Comando.OBTENERMOCHILA:
+//					paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida, PaqueteMochila.class);
+//					Servidor.log.append("Se solicita la mochila del personaje id: " + paqueteMochila.getIdPje() + System.lineSeparator());
+//					PaqueteMochila paqueteMochilaReturn = Servidor.getConector().getMochila(paqueteMochila.getIdPje());
+//					paqueteMochilaReturn.setComando(Comando.OBTENERMOCHILA);
+//					salida.writeObject(gson.toJson(paqueteMochilaReturn));
+//					break;
+				
 				case Comando.CHAT:
 					//La idea es que el usuario escriba un @Usuariopasivo mensaje. el usuarioactivo lo saco del nombre del cliente.
 					//El servidor recibe el paquete chat del usuario activo y se lo debe mandar al usuario pasivo.
