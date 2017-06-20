@@ -251,14 +251,14 @@ public class Conector {
 			for (Map.Entry<Integer, Item> item : paquetePersonaje.getMochila().getItems().entrySet()) {
 				index = i+1;
 				stActualizarMochila.setInt(index, item.getKey());
-				System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " el item:" + item.getKey());
+				//System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " el item:" + item.getKey());
 				i++;
 			}
 			
 			for (int j=i;j<20;j++) {
 				index = j+1;
 				stActualizarMochila.setInt(index, -1);
-				System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " un item vacio");
+				//System.out.println(index + "agrego a la mochila " +paquetePersonaje.getMochila().getIdMochila()+ " de " + paquetePersonaje.getId() + " un item vacio");
 			}
 			
 			stActualizarMochila.setInt(21, paquetePersonaje.getMochila().getIdMochila());
@@ -414,30 +414,30 @@ public class Conector {
 		
 	}
 	
-//	public Item generarItem(int idItem) {
-//		ResultSet result = null;
-//		try {
-//			// Selecciono el item
-//			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
-//			st.setInt(1, idItem);
-//			result = st.executeQuery();
-//
-//			// Obtengo los atributos del item
-//			Item item = new Item(idItem,result.getInt("bonoAtaque"),result.getInt("bonoDefensa"),result.getInt("bonoMagia"),
-//								result.getInt("bonoSalud"),result.getInt("bonoEnergia"),result.getInt("tipo"),result.getString("nombre"), 
-//								"desequipado");
-//			// Devuelvo el paquete item con sus datos
-//			return item;
-//
-//		} catch (SQLException ex) {
-//			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
-//			Servidor.log.append(ex.getMessage() + System.lineSeparator());
-//			ex.printStackTrace();
-//		}
-//		//Retorno item vacio
-//		return new Item();
-//		
-//	}
+	public Item generarItem(int idItem) {
+		ResultSet result = null;
+		try {
+			// Selecciono el item
+			PreparedStatement st = connect.prepareStatement("SELECT * FROM item WHERE idItem = ?");
+			st.setInt(1, idItem);
+			result = st.executeQuery();
+
+			// Obtengo los atributos del item
+			Item item = new Item(idItem,result.getInt("bonoAtaque"),result.getInt("bonoDefensa"),result.getInt("bonoMagia"),
+								result.getInt("bonoSalud"),result.getInt("bonoEnergia"),result.getInt("tipo"),result.getString("nombre"), 
+								"desequipado");
+			// Devuelvo el paquete item con sus datos
+			return item;
+
+		} catch (SQLException ex) {
+			Servidor.log.append("Fallo al intentar recuperar el item " + idItem + System.lineSeparator());
+			Servidor.log.append(ex.getMessage() + System.lineSeparator());
+			ex.printStackTrace();
+		}
+		//Retorno item vacio
+		return new Item();
+		
+	}
 	
 	
 
