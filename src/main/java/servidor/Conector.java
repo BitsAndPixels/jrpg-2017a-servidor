@@ -25,11 +25,11 @@ public class Conector {
 
 	public void connect() {
 		try {
-			Servidor.log.append("Estableciendo conexi�n con la base de datos..." + System.lineSeparator());
+			Servidor.log.append("Estableciendo conexion con la base de datos..." + System.lineSeparator());
 			connect = DriverManager.getConnection("jdbc:sqlite:" + url);
-			Servidor.log.append("Conexi�n con la base de datos establecida con �xito." + System.lineSeparator());
+			Servidor.log.append("Conexion con la base de datos establecida con exito." + System.lineSeparator());
 		} catch (SQLException ex) {
-			Servidor.log.append("Fallo al intentar establecer la conexi�n con la base de datos. " + ex.getMessage()
+			Servidor.log.append("Fallo al intentar establecer la conexion con la base de datos. " + ex.getMessage()
 					+ System.lineSeparator());
 		}
 	}
@@ -38,7 +38,7 @@ public class Conector {
 		try {
 			connect.close();
 		} catch (SQLException ex) {
-			Servidor.log.append("Error al intentar cerrar la conexi�n con la base de datos." + System.lineSeparator());
+			Servidor.log.append("Error al intentar cerrar la conexion con la base de datos." + System.lineSeparator());
 			Logger.getLogger(Conector.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
