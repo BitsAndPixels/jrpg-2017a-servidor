@@ -20,7 +20,6 @@ import mensajeria.PaqueteItem;
 import mensajeria.PaqueteMovimiento;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
-import mensajeria.PaqueteChat;
 
 public class EscuchaCliente extends Thread {
 
@@ -37,8 +36,7 @@ public class EscuchaCliente extends Thread {
 	private PaqueteFinalizarBatalla paqueteFinalizarBatalla;
 	private PaqueteItem paqueteItem;
 	private PaqueteChat paqueteChat;
-	
-	
+
 	private PaqueteDeMovimientos paqueteDeMovimiento;
 	private PaqueteDePersonajes paqueteDePersonajes;
 
@@ -58,7 +56,7 @@ public class EscuchaCliente extends Thread {
 
 			String cadenaLeida = (String) entrada.readObject();
 
-			while (!((paquete = gson.fromJson(cadenaLeida, Paquete.class)).getComando() == Comando.DESCONECTAR)){
+			while (!((paquete = gson.fromJson(cadenaLeida, Paquete.class)).getComando() == Comando.DESCONECTAR)) {
 
 				switch (paquete.getComando()) {
 
@@ -73,7 +71,8 @@ public class EscuchaCliente extends Thread {
 					if (Servidor.getConector().registrarUsuario(paqueteUsuario)) {
 						paqueteSv.setMensajeChat(Paquete.msjExito);
 						salida.writeObject(gson.toJson(paqueteSv));
-						// Si el usuario no se pudo registrar le envio un msj de fracaso
+						// Si el usuario no se pudo registrar le envio un msj de
+						// fracaso
 					} else {
 						paqueteSv.setMensajeChat(Paquete.msjFracaso);
 						salida.writeObject(gson.toJson(paqueteSv));
@@ -99,7 +98,8 @@ public class EscuchaCliente extends Thread {
 					// Recibo el paquete usuario
 					paqueteUsuario = (PaqueteUsuario) (gson.fromJson(cadenaLeida, PaqueteUsuario.class));
 
-					// Si se puede loguear el usuario le envio un mensaje de exito y el paquete personaje con los datos
+					// Si se puede loguear el usuario le envio un mensaje de
+					// exito y el paquete personaje con los datos
 					if (Servidor.getConector().loguearUsuario(paqueteUsuario)) {
 
 						paquetePersonaje = new PaquetePersonaje();
@@ -134,25 +134,32 @@ public class EscuchaCliente extends Thread {
 				case Comando.CONEXION:
 					paquetePersonaje = (PaquetePersonaje) (gson.fromJson(cadenaLeida, PaquetePersonaje.class)).clone();
 
-					Servidor.getPersonajesConectados().put(paquetePersonaje.getId(), (PaquetePersonaje) paquetePersonaje.clone());
-					Servidor.getUbicacionPersonajes().put(paquetePersonaje.getId(), (PaqueteMovimiento) new PaqueteMovimiento(paquetePersonaje.getId()).clone());
+					Servidor.getPersonajesConectados().put(paquetePersonaje.getId(),
+							(PaquetePersonaje) paquetePersonaje.clone());
+					Servidor.getUbicacionPersonajes().put(paquetePersonaje.getId(),
+							(PaqueteMovimiento) new PaqueteMovimiento(paquetePersonaje.getId()).clone());
 
-					synchronized(Servidor.atencionConexiones){
+					synchronized (Servidor.atencionConexiones) {
 						Servidor.atencionConexiones.notify();
 					}
 
 					break;
 
-				case Comando.MOVIMIENTO:					
+				case Comando.MOVIMIENTO:
 
-					paqueteMovimiento = (PaqueteMovimiento) (gson.fromJson((String) cadenaLeida, PaqueteMovimiento.class));
+					paqueteMovimiento = (PaqueteMovimiento) (gson.fromJson((String) cadenaLeida,
+							PaqueteMovimiento.class));
 
-					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje()).setPosX(paqueteMovimiento.getPosX());
-					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje()).setPosY(paqueteMovimiento.getPosY());
-					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje()).setDireccion(paqueteMovimiento.getDireccion());
-					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje()).setFrame(paqueteMovimiento.getFrame());
+					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje())
+							.setPosX(paqueteMovimiento.getPosX());
+					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje())
+							.setPosY(paqueteMovimiento.getPosY());
+					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje())
+							.setDireccion(paqueteMovimiento.getDireccion());
+					Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje())
+							.setFrame(paqueteMovimiento.getFrame());
 
-					synchronized(Servidor.atencionMovimientos){
+					synchronized (Servidor.atencionMovimientos) {
 						Servidor.atencionMovimientos.notify();
 					}
 
@@ -162,22 +169,26 @@ public class EscuchaCliente extends Thread {
 
 					// Indico en el log que el usuario se conecto a ese mapa
 					paquetePersonaje = (PaquetePersonaje) gson.fromJson(cadenaLeida, PaquetePersonaje.class);
-					Servidor.log.append(socket.getInetAddress().getHostAddress() + " ha elegido el mapa " + paquetePersonaje.getMapa() + System.lineSeparator());
+					Servidor.log.append(socket.getInetAddress().getHostAddress() + " ha elegido el mapa "
+							+ paquetePersonaje.getMapa() + System.lineSeparator());
 					break;
 
 				case Comando.BATALLA:
 
-					// Le reenvio al id del personaje batallado que quieren pelear
+					// Le reenvio al id del personaje batallado que quieren
+					// pelear
 					paqueteBatalla = (PaqueteBatalla) gson.fromJson(cadenaLeida, PaqueteBatalla.class);
-					Servidor.log.append(paqueteBatalla.getId() + " quiere batallar con " + paqueteBatalla.getIdEnemigo() + System.lineSeparator());
+					Servidor.log.append(paqueteBatalla.getId() + " quiere batallar con " + paqueteBatalla.getIdEnemigo()
+							+ System.lineSeparator());
 
-					//seteo estado de batalla
+					// seteo estado de batalla
 					Servidor.getPersonajesConectados().get(paqueteBatalla.getId()).setEstado(Estado.estadoBatalla);
-					Servidor.getPersonajesConectados().get(paqueteBatalla.getIdEnemigo()).setEstado(Estado.estadoBatalla);
+					Servidor.getPersonajesConectados().get(paqueteBatalla.getIdEnemigo())
+							.setEstado(Estado.estadoBatalla);
 					paqueteBatalla.setMiTurno(true);
 					salida.writeObject(gson.toJson(paqueteBatalla));
-					for(EscuchaCliente conectado : Servidor.getClientesConectados()){
-						if(conectado.getIdPersonaje() == paqueteBatalla.getIdEnemigo()){
+					for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
+						if (conectado.getIdPersonaje() == paqueteBatalla.getIdEnemigo()) {
 							int aux = paqueteBatalla.getId();
 							paqueteBatalla.setId(paqueteBatalla.getIdEnemigo());
 							paqueteBatalla.setIdEnemigo(aux);
@@ -187,32 +198,35 @@ public class EscuchaCliente extends Thread {
 						}
 					}
 
-					synchronized(Servidor.atencionConexiones){
+					synchronized (Servidor.atencionConexiones) {
 						Servidor.atencionConexiones.notify();
 					}
 
 					break;
 
-				case Comando.ATACAR: 
+				case Comando.ATACAR:
 					paqueteAtacar = (PaqueteAtacar) gson.fromJson(cadenaLeida, PaqueteAtacar.class);
-					for(EscuchaCliente conectado : Servidor.getClientesConectados()) {
-						if(conectado.getIdPersonaje() == paqueteAtacar.getIdEnemigo()) {
+					for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
+						if (conectado.getIdPersonaje() == paqueteAtacar.getIdEnemigo()) {
 							conectado.getSalida().writeObject(gson.toJson(paqueteAtacar));
 						}
 					}
 					break;
 
-				case Comando.FINALIZARBATALLA: 
-					paqueteFinalizarBatalla = (PaqueteFinalizarBatalla) gson.fromJson(cadenaLeida, PaqueteFinalizarBatalla.class);
-					Servidor.getPersonajesConectados().get(paqueteFinalizarBatalla.getId()).setEstado(Estado.estadoJuego);
-					Servidor.getPersonajesConectados().get(paqueteFinalizarBatalla.getIdEnemigo()).setEstado(Estado.estadoJuego);
-					for(EscuchaCliente conectado : Servidor.getClientesConectados()) {
-						if(conectado.getIdPersonaje() == paqueteFinalizarBatalla.getIdEnemigo()) {
+				case Comando.FINALIZARBATALLA:
+					paqueteFinalizarBatalla = (PaqueteFinalizarBatalla) gson.fromJson(cadenaLeida,
+							PaqueteFinalizarBatalla.class);
+					Servidor.getPersonajesConectados().get(paqueteFinalizarBatalla.getId())
+							.setEstado(Estado.estadoJuego);
+					Servidor.getPersonajesConectados().get(paqueteFinalizarBatalla.getIdEnemigo())
+							.setEstado(Estado.estadoJuego);
+					for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
+						if (conectado.getIdPersonaje() == paqueteFinalizarBatalla.getIdEnemigo()) {
 							conectado.getSalida().writeObject(gson.toJson(paqueteFinalizarBatalla));
 						}
 					}
 
-					synchronized(Servidor.atencionConexiones){
+					synchronized (Servidor.atencionConexiones) {
 						Servidor.atencionConexiones.notify();
 					}
 
@@ -225,12 +239,12 @@ public class EscuchaCliente extends Thread {
 					Servidor.getPersonajesConectados().remove(paquetePersonaje.getId());
 					Servidor.getPersonajesConectados().put(paquetePersonaje.getId(), paquetePersonaje);
 
-					for(EscuchaCliente conectado : Servidor.getClientesConectados()) {
+					for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
 						conectado.getSalida().writeObject(gson.toJson(paquetePersonaje));
 					}
 
 					break;
-				
+
 				case Comando.OBTENERITEMRANDOM:
 					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
 					Servidor.log.append("Se solicita el item random " + System.lineSeparator());
@@ -238,45 +252,54 @@ public class EscuchaCliente extends Thread {
 					paqueteItemReturn.setComando(Comando.OBTENERITEMRANDOM);
 					salida.writeObject(gson.toJson(paqueteItemReturn));
 					break;
-				
-//				case Comando.CANTIDADITEMS:
-//					paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
-//					PaqueteItem paqueteItemCant = new PaqueteItem();
-//					paqueteItemCant.setCantidad(Servidor.getConector().getCantItem());
-//					paqueteItemCant.setComando(Comando.CANTIDADITEMS);
-//					salida.writeObject(gson.toJson(paqueteItemCant));
-//					break;
-					
-//				case Comando.OBTENERINVENTARIO:
-//					paqueteInventario = (PaqueteInventario) gson.fromJson(cadenaLeida, PaqueteInventario.class);
-//					Servidor.log.append("Se solicita el inventario del personaje id: " + paqueteInventario.getIdPje() + System.lineSeparator());
-//					PaqueteInventario paqueteInventarioReturn = Servidor.getConector().getInventario(paqueteInventario.getIdPje());
-//					paqueteInventarioReturn.setComando(Comando.OBTENERINVENTARIO);
-//					salida.writeObject(gson.toJson(paqueteInventarioReturn));
-//					break;
-					
-//				case Comando.OBTENERMOCHILA:
-//					paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida, PaqueteMochila.class);
-//					Servidor.log.append("Se solicita la mochila del personaje id: " + paqueteMochila.getIdPje() + System.lineSeparator());
-//					PaqueteMochila paqueteMochilaReturn = Servidor.getConector().getMochila(paqueteMochila.getIdPje());
-//					paqueteMochilaReturn.setComando(Comando.OBTENERMOCHILA);
-//					salida.writeObject(gson.toJson(paqueteMochilaReturn));
-//					break;
-				
+
+				// case Comando.CANTIDADITEMS:
+				// paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida,
+				// PaqueteItem.class);
+				// PaqueteItem paqueteItemCant = new PaqueteItem();
+				// paqueteItemCant.setCantidad(Servidor.getConector().getCantItem());
+				// paqueteItemCant.setComando(Comando.CANTIDADITEMS);
+				// salida.writeObject(gson.toJson(paqueteItemCant));
+				// break;
+
+				// case Comando.OBTENERINVENTARIO:
+				// paqueteInventario = (PaqueteInventario)
+				// gson.fromJson(cadenaLeida, PaqueteInventario.class);
+				// Servidor.log.append("Se solicita el inventario del personaje
+				// id: " + paqueteInventario.getIdPje() +
+				// System.lineSeparator());
+				// PaqueteInventario paqueteInventarioReturn =
+				// Servidor.getConector().getInventario(paqueteInventario.getIdPje());
+				// paqueteInventarioReturn.setComando(Comando.OBTENERINVENTARIO);
+				// salida.writeObject(gson.toJson(paqueteInventarioReturn));
+				// break;
+
+				// case Comando.OBTENERMOCHILA:
+				// paqueteMochila = (PaqueteMochila) gson.fromJson(cadenaLeida,
+				// PaqueteMochila.class);
+				// Servidor.log.append("Se solicita la mochila del personaje id:
+				// " + paqueteMochila.getIdPje() + System.lineSeparator());
+				// PaqueteMochila paqueteMochilaReturn =
+				// Servidor.getConector().getMochila(paqueteMochila.getIdPje());
+				// paqueteMochilaReturn.setComando(Comando.OBTENERMOCHILA);
+				// salida.writeObject(gson.toJson(paqueteMochilaReturn));
+				// break;
+
 				case Comando.CHAT:
-					//La idea es que el usuario escriba un @Usuariopasivo mensaje. el usuarioactivo lo saco del nombre del cliente.
-					//El servidor recibe el paquete chat del usuario activo y se lo debe mandar al usuario pasivo.
 					paqueteChat = (PaqueteChat) gson.fromJson(cadenaLeida, PaqueteChat.class);
-
-					if(!paqueteChat.getNombreUsuarioPasivo().isEmpty())
-					{	
+					switch (paqueteChat.getTipoMensaje()) {
+					case COMANDO:
+						mensajeComando();
+						break;
+					case PRIVADO:
 						mensajePrivado();
-					}
-					else
-					{ 
+						break;
+					case GLOBAL:
 						mensajeGlobal();
+						break;
+					default:
+						break;
 					}
-
 				default:
 					break;
 				}
@@ -303,14 +326,32 @@ public class EscuchaCliente extends Thread {
 		} catch (IOException | ClassNotFoundException e) {
 			Servidor.log.append("Error de conexion: " + e.getMessage() + System.lineSeparator());
 			e.printStackTrace();
-		} 
+		}
+	}
+
+	private void mensajeComando() {
+		switch (paqueteChat.getMensajeChat()) {
+		case "lista":
+			paqueteChat.setMensajeChat(Servidor.getCadenaPersonajesConectados());
+			break;
+		default:
+			paqueteChat.setMensajeChat("No se reconoce el comando");
+			break;
+		}
+		paqueteChat.setNombreUsuarioPasivo(paqueteChat.getNombreUsuarioActivo());
+		paqueteChat.setNombreUsuarioActivo("Servidor");
+		try {
+			getSalida().writeObject(gson.toJson(paqueteChat));
+			logueoChat();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void mensajeGlobal() {
-		for(EscuchaCliente conectado : Servidor.getClientesConectados())
-		{
-			if(!(conectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioActivo()) == 0))
-			{
+		// paqueteChat.setNombreUsuarioActivo(nombreUsuarioActivo);
+		for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
+			if (!(conectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioActivo()) == 0)) {
 				try {
 					conectado.getSalida().writeObject(gson.toJson(paqueteChat));
 					logueoChat();
@@ -322,22 +363,22 @@ public class EscuchaCliente extends Thread {
 	}
 
 	private void logueoChat() {
-		Servidor.log.append("El usuario: " + paqueteChat.getNombreUsuarioActivo() + " dice: "
-				+ paqueteChat.getMensajeChat() + " al usuario: " 
-				+ paqueteChat.getNombreUsuarioPasivo() + System.lineSeparator());
+		Servidor.log.append("Se envio el paquete de tipo " + paqueteChat.getTipoMensaje() + " con el mensaje "
+				+ paqueteChat.getMensajeChat() + " del usuario " + paqueteChat.getNombreUsuarioActivo() + " al usuario "
+				+ paqueteChat.getNombreUsuarioPasivo() + "." + System.lineSeparator());
 	}
 
 	private void mensajePrivado() {
-		for(EscuchaCliente conectado : Servidor.getClientesConectados())
-		{			if(conectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioPasivo()) == 0){
-			try {
-				conectado.getSalida().writeObject(gson.toJson(paqueteChat));
-				logueoChat();
-			} catch (IOException e) {
-				e.printStackTrace();
+		for (EscuchaCliente conectado : Servidor.getClientesConectados()) {
+			if (conectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioPasivo()) == 0) {
+				try {
+					conectado.getSalida().writeObject(gson.toJson(paqueteChat));
+					logueoChat();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
 			}
-			break;
-		}
 		}
 	}
 
@@ -353,7 +394,7 @@ public class EscuchaCliente extends Thread {
 		return salida;
 	}
 
-	public PaquetePersonaje getPaquetePersonaje(){
+	public PaquetePersonaje getPaquetePersonaje() {
 		return paquetePersonaje;
 	}
 
@@ -361,4 +402,3 @@ public class EscuchaCliente extends Thread {
 		return idPersonaje;
 	}
 }
-
