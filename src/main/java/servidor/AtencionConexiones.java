@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 import cliente.Cliente;
+import comando.Comando;
 import estados.Estado;
-import mensajeria.Comando;
 import mensajeria.PaqueteDePersonajes;
 
 public class AtencionConexiones extends Thread {
