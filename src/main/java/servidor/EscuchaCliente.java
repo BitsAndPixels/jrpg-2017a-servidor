@@ -31,17 +31,17 @@ public class EscuchaCliente extends Thread {
 	private final Gson gson = new Gson();
 
 	private PaquetePersonaje paquetePersonaje;
-	private PaqueteMovimiento paqueteMovimiento;
-	private PaqueteBatalla paqueteBatalla;
-	private PaqueteAtacar paqueteAtacar;
-	private PaqueteFinalizarBatalla paqueteFinalizarBatalla;
-	private PaqueteItem paqueteItem;
-	private PaqueteChat paqueteChat;
-
-	private PaqueteDeMovimientos paqueteDeMovimiento;
+//	private PaqueteMovimiento paqueteMovimiento;
+//	private PaqueteBatalla paqueteBatalla;
+//	private PaqueteAtacar paqueteAtacar;
+//	private PaqueteFinalizarBatalla paqueteFinalizarBatalla;
+//	private PaqueteItem paqueteItem;
+//	private PaqueteChat paqueteChat;
+//
+//	private PaqueteDeMovimientos paqueteDeMovimiento;
 	private PaqueteDePersonajes paqueteDePersonajes;
 	
-	private boolean conectado = true;
+	private boolean estaConectado = true;
 	private PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
 	
 
@@ -57,7 +57,7 @@ public class EscuchaCliente extends Thread {
 		String cadenaLeida;
 		
 
-		while ( conectado ){
+		while (estaConectado){
 
 			try {
 				cadenaLeida = (String) entrada.readObject();
@@ -457,6 +457,7 @@ public class EscuchaCliente extends Thread {
 			salida.close();
 			socket.close();
 		} catch (IOException e) {
+			Servidor.log.append("Ocurrio un error al cerrar las conexiones." + System.lineSeparator());
 			e.printStackTrace();
 		}
 		
@@ -468,17 +469,16 @@ public class EscuchaCliente extends Thread {
 		for (EscuchaCliente cliente : Servidor.getClientesConectados()) {
 			paqueteDePersonajes = new PaqueteDePersonajes(Servidor.getPersonajesConectados());
 			paqueteDePersonajes.setComando(Comando.CONEXION);
-//			conectado.salida.writeObject(gson.toJson(paqueteDePersonajes, PaqueteDePersonajes.class));
 			try {
 				cliente.salida.writeObject(paqueteDePersonajes.obtenerJson());
 			} catch (IOException e) {
-
+				Servidor.log.append("Ocurrio un error al desconectar." + cliente.getId() + System.lineSeparator());
 				e.printStackTrace();
 			}
 		}
 
 //		Servidor.log.append(paquete.getIp() + " se ha desconectado." + System.lineSeparator());
-		conectado = false;
+		estaConectado = false;
 		
 	}
 
