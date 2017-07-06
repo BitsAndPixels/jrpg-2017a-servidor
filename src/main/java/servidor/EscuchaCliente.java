@@ -61,8 +61,8 @@ public class EscuchaCliente extends Thread {
 
 			try {
 				cadenaLeida = (String) entrada.readObject();
-				paquete = Paquete.loadJson(cadenaLeida);
-				ComandoServidor comando = (ComandoServidor) paquete.getComandoObj(ComandoServidor.PACKAGEO);
+				paquete = Paquete.cargarJson(cadenaLeida);
+				ComandoServidor comando = (ComandoServidor) paquete.obtenerInstanciaComando(ComandoServidor.COMANDO);
 				comando.setListener(this);
 				comando.ejecutarComando();
 
@@ -470,7 +470,7 @@ public class EscuchaCliente extends Thread {
 			paqueteDePersonajes.setComando(Comando.CONEXION);
 //			conectado.salida.writeObject(gson.toJson(paqueteDePersonajes, PaqueteDePersonajes.class));
 			try {
-				cliente.salida.writeObject(paqueteDePersonajes.getJson());
+				cliente.salida.writeObject(paqueteDePersonajes.obtenerJson());
 			} catch (IOException e) {
 
 				e.printStackTrace();

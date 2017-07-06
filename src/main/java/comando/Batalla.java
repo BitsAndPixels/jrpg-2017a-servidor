@@ -14,7 +14,6 @@ public class Batalla extends ComandoServidor{
 	public void ejecutarComando() {
 		// Le reenvio al id del personaje batallado que quieren
 		// pelear
-//		paqueteBatalla = (PaqueteBatalla) gson.fromJson(cadenaLeida, PaqueteBatalla.class);
 		this.paqueteBatalla = (PaqueteBatalla) paquete;
 		Servidor.log.append(paqueteBatalla.getId() + " quiere batallar con " + paqueteBatalla.getIdEnemigo()
 				+ System.lineSeparator());
@@ -24,11 +23,11 @@ public class Batalla extends ComandoServidor{
 		Servidor.getPersonajesConectados().get(paqueteBatalla.getIdEnemigo())
 				.setEstado(Estado.estadoBatalla);
 		paqueteBatalla.setMiTurno(true);
-//		salida.writeObject(gson.toJson(paqueteBatalla));
 		
 		try {
-			listener.getSalida().writeObject(paqueteBatalla.getJson());
+			listener.getSalida().writeObject(paqueteBatalla.obtenerJson());
 		} catch (IOException e) {
+			Servidor.log.append("Fallo al intentar iniciar batalla." + System.lineSeparator());
 			e.printStackTrace();
 		}
 		
@@ -38,10 +37,10 @@ public class Batalla extends ComandoServidor{
 				paqueteBatalla.setId(paqueteBatalla.getIdEnemigo());
 				paqueteBatalla.setIdEnemigo(aux);
 				paqueteBatalla.setMiTurno(false);
-//				conectado.getSalida().writeObject(gson.toJson(paqueteBatalla));
 				try {
-					clienteConectado.getSalida().writeObject(paqueteBatalla.getJson());
+					clienteConectado.getSalida().writeObject(paqueteBatalla.obtenerJson());
 				} catch (IOException e) {
+					Servidor.log.append("Fallo al intentar iniciar batalla." + System.lineSeparator());
 					e.printStackTrace();
 				}
 				break;

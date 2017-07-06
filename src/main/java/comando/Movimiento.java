@@ -9,8 +9,7 @@ public class Movimiento extends ComandoServidor{
 	
 	@Override
 	public void ejecutarComando() {
-//		paqueteMovimiento = (PaqueteMovimiento) (gson.fromJson((String) cadenaLeida,
-//				PaqueteMovimiento.class));
+
 		this.paqueteMovimiento = (PaqueteMovimiento) paquete;
 
 		Servidor.getUbicacionPersonajes().get(paqueteMovimiento.getIdPersonaje())

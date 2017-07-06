@@ -18,7 +18,6 @@ public class InicioSesion extends ComandoServidor{
 		paqueteSv.setComando(Comando.INICIOSESION);
 
 		// Recibo el paquete usuario
-//		paqueteUsuario = (PaqueteUsuario) (gson.fromJson(cadenaLeida, PaqueteUsuario.class));
 		this.paqueteUsuario = (PaqueteUsuario) paquete;
 
 		// Si se puede loguear el usuario le envio un mensaje de
@@ -31,19 +30,19 @@ public class InicioSesion extends ComandoServidor{
 			paquetePersonaje.setMensajeChat(Paquete.msjExito);
 			listener.setIdPersonaje(paquetePersonaje.getId());
 
-//			salida.writeObject(gson.toJson(paquetePersonaje));
 			try {
-				listener.getSalida().writeObject(paquetePersonaje.getJson());
+				listener.getSalida().writeObject(paquetePersonaje.obtenerJson());
 			} catch (IOException e) {
+				Servidor.log.append("Fallo al intentar iniciar sesion." + System.lineSeparator());
 				e.printStackTrace();
 			}
 
 		} else {
 			paqueteSv.setMensajeChat(Paquete.msjFracaso);
-//			salida.writeObject(gson.toJson(paqueteSv));
 			try {
-				listener.getSalida().writeObject(paqueteSv.getJson());
+				listener.getSalida().writeObject(paqueteSv.obtenerJson());
 			} catch (IOException e) {
+				Servidor.log.append("Fallo al intentar iniciar sesion." + System.lineSeparator());
 				e.printStackTrace();
 			}
 		}

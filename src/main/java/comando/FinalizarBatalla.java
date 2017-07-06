@@ -13,9 +13,7 @@ public class FinalizarBatalla extends ComandoServidor {
 
 	@Override
 	public void ejecutarComando() {
-//		paqueteFinalizarBatalla = (PaqueteFinalizarBatalla) gson.fromJson(cadenaLeida,
-//				PaqueteFinalizarBatalla.class);
-		
+
 		this.paqueteFinalizarBatalla = (PaqueteFinalizarBatalla) paquete;
 		Servidor.getPersonajesConectados().get(paqueteFinalizarBatalla.getId())
 				.setEstado(Estado.estadoJuego);
@@ -23,10 +21,11 @@ public class FinalizarBatalla extends ComandoServidor {
 				.setEstado(Estado.estadoJuego);
 		for (EscuchaCliente clienteConectado : Servidor.getClientesConectados()) {
 			if (clienteConectado.getIdPersonaje() == paqueteFinalizarBatalla.getIdEnemigo()) {
-//				conectado.getSalida().writeObject(gson.toJson(paqueteFinalizarBatalla));
+
 				try {
-					clienteConectado.getSalida().writeObject(paqueteFinalizarBatalla.getJson());
+					clienteConectado.getSalida().writeObject(paqueteFinalizarBatalla.obtenerJson());
 				} catch (IOException e) {
+					Servidor.log.append("No se ha podido finalizar la batalla." + System.lineSeparator());
 					e.printStackTrace();
 				}
 			}

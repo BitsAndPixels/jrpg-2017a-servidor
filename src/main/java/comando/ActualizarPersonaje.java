@@ -11,7 +11,6 @@ public class ActualizarPersonaje extends ComandoServidor{
 	
 	@Override
 	public void ejecutarComando() {
-//		paquetePersonaje = (PaquetePersonaje) gson.fromJson(cadenaLeida, PaquetePersonaje.class);
 		this.paquetePersonaje = (PaquetePersonaje) paquete;
 		Servidor.getConector().actualizarPersonaje(paquetePersonaje);
 
@@ -19,10 +18,10 @@ public class ActualizarPersonaje extends ComandoServidor{
 		Servidor.getPersonajesConectados().put(paquetePersonaje.getId(), paquetePersonaje);
 
 		for (EscuchaCliente clienteConectado : Servidor.getClientesConectados()) {
-//			conectado.getSalida().writeObject(gson.toJson(paquetePersonaje));
 			try {
-				clienteConectado.getSalida().writeObject(paquetePersonaje.getJson());
+				clienteConectado.getSalida().writeObject(paquetePersonaje.obtenerJson());
 			} catch (IOException e) {
+				Servidor.log.append("Fallo al intentar actualizar el personaje" + paquetePersonaje.getNombre()  + System.lineSeparator());
 				e.printStackTrace();
 			}
 		}

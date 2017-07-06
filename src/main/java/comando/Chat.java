@@ -12,7 +12,6 @@ public class Chat extends ComandoServidor{
 	
 	@Override
 	public void ejecutarComando() {
-//		paqueteChat = (PaqueteChat) gson.fromJson(cadenaLeida, PaqueteChat.class);
 		this.paqueteChat = (PaqueteChat) paquete;
 		switch (paqueteChat.getTipoMensaje()) {
 		case COMANDO:
@@ -41,10 +40,10 @@ public class Chat extends ComandoServidor{
 		paqueteChat.setNombreUsuarioPasivo(paqueteChat.getNombreUsuarioActivo());
 		paqueteChat.setNombreUsuarioActivo("Servidor");
 		try {
-//			getSalida().writeObject(gson.toJson(paqueteChat));
-			listener.getSalida().writeObject(paqueteChat.getJson());
+			listener.getSalida().writeObject(paqueteChat.obtenerJson());
 			logueoChat();
 		} catch (IOException e) {
+			Servidor.log.append("Fallo al intentar enviar un mensaje" + System.lineSeparator());
 			e.printStackTrace();
 		}
 	}
@@ -54,10 +53,10 @@ public class Chat extends ComandoServidor{
 		for (EscuchaCliente clienteConectado : Servidor.getClientesConectados()) {
 			if (!(clienteConectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioActivo()) == 0)) {
 				try {
-//					conectado.getSalida().writeObject(gson.toJson(paqueteChat));
-					clienteConectado.getSalida().writeObject(paqueteChat.getJson());
+					clienteConectado.getSalida().writeObject(paqueteChat.obtenerJson());
 					logueoChat();
 				} catch (IOException e) {
+					Servidor.log.append("Fallo al intentar enviar un mensaje" + System.lineSeparator());
 					e.printStackTrace();
 				}
 			}
@@ -74,10 +73,10 @@ public class Chat extends ComandoServidor{
 		for (EscuchaCliente clienteConectado : Servidor.getClientesConectados()) {
 			if (clienteConectado.getPaquetePersonaje().getNombre().compareTo(paqueteChat.getNombreUsuarioPasivo()) == 0) {
 				try {
-//					conectado.getSalida().writeObject(gson.toJson(paqueteChat));
-					clienteConectado.getSalida().writeObject(paqueteChat.getJson());
+					clienteConectado.getSalida().writeObject(paqueteChat.obtenerJson());
 					logueoChat();
 				} catch (IOException e) {
+					Servidor.log.append("Fallo al intentar enviar un mensaje" + System.lineSeparator());
 					e.printStackTrace();
 				}
 				break;

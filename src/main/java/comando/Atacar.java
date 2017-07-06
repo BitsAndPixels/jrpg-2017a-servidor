@@ -11,14 +11,13 @@ public class Atacar extends ComandoServidor {
 	
 	@Override
 	public void ejecutarComando() {
-//		paqueteAtacar = (PaqueteAtacar) gson.fromJson(cadenaLeida, PaqueteAtacar.class);
 		this.paqueteAtacar = (PaqueteAtacar) paquete;
 		for (EscuchaCliente clienteConectado : Servidor.getClientesConectados()) {
 			if (clienteConectado.getIdPersonaje() == paqueteAtacar.getIdEnemigo()) {
-//				conectado.getSalida().writeObject(gson.toJson(paqueteAtacar));
 				try {
-					clienteConectado.getSalida().writeObject(paqueteAtacar.getJson());
+					clienteConectado.getSalida().writeObject(paqueteAtacar.obtenerJson());
 				} catch (IOException e) {
+					Servidor.log.append("Fallo al intentar atacar a " + paqueteAtacar.getIdEnemigo()  + System.lineSeparator());
 					e.printStackTrace();
 				}
 			}

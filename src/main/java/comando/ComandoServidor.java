@@ -5,7 +5,7 @@ import comando.Comando;
 
 public abstract class ComandoServidor extends Comando {
 	
-	public static final String PACKAGEO = "comando";
+	public static final String COMANDO = "comando";
 	
 	protected EscuchaCliente listener;
 	

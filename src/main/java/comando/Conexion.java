@@ -10,15 +10,10 @@ public class Conexion extends ComandoServidor{
 	
 	@Override
 	public void ejecutarComando() {
-//		paquetePersonaje = (PaquetePersonaje) (gson.fromJson(cadenaLeida, PaquetePersonaje.class)).clone();
-		
+	
 		this.paquetePersonaje = (PaquetePersonaje) paquete;
 		listener.setPaquetePersonaje(paquetePersonaje);
 
-//		Servidor.getPersonajesConectados().put(paquetePersonaje.getId(),
-//				(PaquetePersonaje) paquetePersonaje.clone());
-//		Servidor.getUbicacionPersonajes().put(paquetePersonaje.getId(),
-//				(PaqueteMovimiento) new PaqueteMovimiento(paquetePersonaje.getId()).clone());
 		Servidor.getPersonajesConectados().put(paquetePersonaje.getId(), paquetePersonaje);
 		Servidor.getUbicacionPersonajes().put(paquetePersonaje.getId(), (PaqueteMovimiento) new PaqueteMovimiento(paquetePersonaje.getId()));
 		

@@ -10,15 +10,14 @@ public class ObtenerItemRandom extends ComandoServidor{
 	
 	@Override
 	public void ejecutarComando() {
-//		paqueteItem = (PaqueteItem) gson.fromJson(cadenaLeida, PaqueteItem.class);
 		this.paqueteItem = (PaqueteItem) paquete;
 		Servidor.log.append("Se solicita el item random " + System.lineSeparator());
 		PaqueteItem paqueteItemReturn = Servidor.getConector().getItemRandom();
 		paqueteItemReturn.setComando(Comando.OBTENERITEMRANDOM);
-//		salida.writeObject(gson.toJson(paqueteItemReturn));
 		try {
-			listener.getSalida().writeObject(paqueteItemReturn.getJson());
+			listener.getSalida().writeObject(paqueteItemReturn.obtenerJson());
 		} catch (IOException e) {
+			Servidor.log.append("Fallo al intentar obtener item de la BBDD." + this.paqueteItem.getIdItem() + System.lineSeparator());
 			e.printStackTrace();
 		}
 	}

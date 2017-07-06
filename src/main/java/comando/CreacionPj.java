@@ -7,21 +7,21 @@ import mensajeria.PaqueteUsuario;
 import servidor.Servidor;
 
 public class CreacionPj extends ComandoServidor{
+	private PaqueteUsuario paqueteUsuario;
+	
 	@Override
 	public void ejecutarComando() {
 		// Casteo el paquete personaje
-//		paquetePersonaje = (PaquetePersonaje) (gson.fromJson(cadenaLeida, PaquetePersonaje.class));
-		
-		PaqueteUsuario paqueteUsuario = listener.getPaqueteUsuario();
+		this.paqueteUsuario = listener.getPaqueteUsuario();
 
 		// Guardo el personaje en ese usuario
 		Servidor.getConector().registrarPersonaje((PaquetePersonaje) paquete, paqueteUsuario);
 
 		// Le envio el id del personaje
-//		salida.writeObject(gson.toJson(paquetePersonaje, paquetePersonaje.getClass()));
 		try {
-			this.listener.getSalida().writeObject(((PaquetePersonaje) paquete).getJson());
+			this.listener.getSalida().writeObject(((PaquetePersonaje) paquete).obtenerJson());
 		} catch (IOException e) {
+			Servidor.log.append("Fallo al intentar crear el usuario" + paqueteUsuario.getUsername()  + System.lineSeparator());
 			e.printStackTrace();
 		}
 
