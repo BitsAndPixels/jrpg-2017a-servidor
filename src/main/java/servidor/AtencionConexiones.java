@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 import cliente.Cliente;
+import comando.Comando;
 import estados.Estado;
-import mensajeria.Comando;
 import mensajeria.PaqueteDePersonajes;
 
 public class AtencionConexiones extends Thread {
@@ -37,7 +37,8 @@ public class AtencionConexiones extends Thread {
 							
 							PaqueteDePersonajes pdp = (PaqueteDePersonajes) new PaqueteDePersonajes(Servidor.getPersonajesConectados()).clone();
 							pdp.setComando(Comando.CONEXION);
-							conectado.getSalida().writeObject(gson.toJson(pdp));	
+							
+							conectado.getSalida().writeObject(pdp.obtenerJson());	
 							
 							
 						}
